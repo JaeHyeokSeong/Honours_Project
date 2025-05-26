@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+#display sql log
+logging.level:
+  org.hibernate.SQL: debug

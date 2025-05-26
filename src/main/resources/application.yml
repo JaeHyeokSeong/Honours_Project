@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: honours-project
+
+#datasource settings
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/members-management
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate.format_sql: true
+
+#display sql log
+logging.level:
+  org.hibernate.SQL: debug
