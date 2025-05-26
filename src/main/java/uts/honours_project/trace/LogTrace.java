@@ -26,8 +26,8 @@ public class LogTrace {
 
     public void endWithException(TraceStatus traceStatus, Exception e) {
         long totalTime = System.currentTimeMillis() - traceStatus.getStartTime();
-        log.info("[Id={}] {} {} [time={}ms]", traceStatus.getTraceId().getId(),
-                displayPrefix(END_WITH_EX_PREFIX, traceStatus.getTraceId().getLevel()), traceStatus.getMessage(), totalTime, e);
+        log.info("[Id={}] {} {} [time={}ms] [ex={}]", traceStatus.getTraceId().getId(),
+                displayPrefix(END_WITH_EX_PREFIX, traceStatus.getTraceId().getLevel()), traceStatus.getMessage(), totalTime, e.toString());
         releaseTraceId();
     }
 
