@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import uts.honours_project.domain.entity.Member;
+import uts.honours_project.domain.service.dto.MemberDto;
 
 import java.util.List;
 
@@ -29,8 +30,8 @@ class MemberServiceTest {
         memberService.joinMember(memberB);
 
         //then
-        List<Member> findMembers = memberService.findAllMembers();
-        assertThat(findMembers)
-                .containsExactly(memberA, memberB);
+        List<MemberDto> findMembers = memberService.findAllMembers();
+        assertThat(findMembers).extracting("name")
+                .containsExactly(memberA.getName(), memberB.getName());
     }
 }

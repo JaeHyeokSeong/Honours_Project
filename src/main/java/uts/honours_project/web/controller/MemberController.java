@@ -2,49 +2,52 @@ package uts.honours_project.web.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import uts.honours_project.domain.entity.Member;
 import uts.honours_project.domain.service.MemberService;
-import uts.honours_project.web.controller.dto.MemberDto;
-import uts.honours_project.web.controller.dto.MemberFormDto;
+import uts.honours_project.domain.service.dto.MemberDto;
+import uts.honours_project.exception.MemberAddException;
+import uts.honours_project.web.controller.dto.MemberAddErrorResult;
+import uts.honours_project.web.controller.dto.MemberAddDto;
 
 import java.util.List;
+import java.util.Locale;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
+    private final MessageSource messageSource;
 
-    @GetMapping("/member")
-    public String memberAddForm(@ModelAttribute("memberFormDto") MemberFormDto form) {
-        return "member/memberAddForm";
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public MemberAddErrorResult memberAddExHandle(MemberAddException e) {
+        List<String> messages = e.getErrors().stream()
+                .map(error -> messageSource.getMessage(error, Locale.ENGLISH))
+                .toList();
+
+        return new MemberAddErrorResult(messages);
     }
 
     @PostMapping("/member")
-    public String memberAdd(@Valid @ModelAttribute MemberFormDto form, BindingResult bindingResult) {
+    public ResponseEntity<MemberAddDto> member(@Valid @RequestBody MemberAddDto dto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "member/memberAddForm";
+            throw new MemberAddException(bindingResult.getAllErrors());
         }
 
-        Member member = new Member(form.getName(), form.getAge());
+        Member member = new Member(dto.getName(), dto.getAge());
         memberService.joinMember(member);
 
-        return "redirect:/members";
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
     @GetMapping("/members")
-    public String members(Model model) {
-        List<MemberDto> findMembers = memberService.findAllMembers().stream()
-                .map(MemberDto::new)
-                .toList();
-
-        model.addAttribute("members", findMembers);
-        return "member/members";
+    public List<MemberDto> members() {
+        return memberService.findAllMembers();
     }
 }

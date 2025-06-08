@@ -14,7 +14,8 @@ public class TraceAspect {
 
     private final LogTrace logTrace;
 
-    @Pointcut("execution(* uts.honours_project.web.controller..*.*(..))")
+    @Pointcut("execution(* uts.honours_project.web.controller..*.*(..))" +
+            " && !execution(* uts.honours_project.web.controller..*.*ExHandle(..))")
     private void allController() {}
 
     @Pointcut("execution(* uts.honours_project.domain.service..*.*(..))")

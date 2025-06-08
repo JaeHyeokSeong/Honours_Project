@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uts.honours_project.domain.entity.Member;
 import uts.honours_project.domain.repository.MemberRepository;
+import uts.honours_project.domain.service.dto.MemberDto;
 
 import java.util.List;
 
@@ -20,7 +21,9 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public List<Member> findAllMembers() {
-        return memberRepository.findAll();
+    public List<MemberDto> findAllMembers() {
+        return memberRepository.findAll().stream()
+                .map(MemberDto::new)
+                .toList();
     }
 }
